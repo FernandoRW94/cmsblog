@@ -1,0 +1,39 @@
+﻿@model StoryFormModel
+
+<form asp-action="@(Model.IsEdit ? "EditStory" : "Index")" asp-controller="Story" method="post" autocomplete="off" asp-antiforgery="true">
+    <input hidden asp-for="StoryId" />
+    <input hidden asp-for="IsEdit" />
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input type="text" class="form-control" asp-for="Title" aria-describedby="titleHelp">
+        <div id="titleHelp" class="form-text">This will be the name of your story.</div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Categories" class="form-label"></label>
+        <select asp-for="Categories" class="form-select" size="5" aria-label="Story categories" aria-describedby="categoriesHelp" multiple>
+            <option value="Action">Action</option>
+            <option value="Adventure">Adventure</option>
+            <option value="3">Biography</option>
+            <option value="Drama">Drama</option>
+            <option value="Fairy Tale">Fairy Tale</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Horror">Horror</option>
+            <option value="Medieval">Medieval</option>
+            <option value="Romance">Romance</option>
+            <option value="RPG">RPG</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Thriller">Thriller</option>
+            <option value="True Story">True Story</option>
+        </select>
+        <div id="categoriesHelp" class="form-text">Choose what categories your story fits in.</div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Content" class="form-label">Your story</label>
+        <textarea class="form-control" asp-for="Content" rows="20"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form> 

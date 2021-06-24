@@ -35,7 +35,7 @@
                         {
                             <li><a class="dropdown-item" href="/admin">@Model.Header.DashboardButtonText.Text</a></li>
                         }
-                        <li><a class="dropdown-item" href="#">@Model.Header.NewPostButtonText.Text</a></li>
+                        <li><a class="dropdown-item" asp-action="Index" asp-controller="Story">@Model.Header.NewPostButtonText.Text</a></li>
                         <li><a class="dropdown-item" href="#">@Model.Header.ProfileButtonText.Text</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/logout">@Model.Header.LogoutButtonText.Text</a></li>

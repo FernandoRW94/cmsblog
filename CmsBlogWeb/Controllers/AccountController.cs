@@ -1,12 +1,9 @@
 ﻿using CmsBlogWeb.Business;
 using CmsBlogWeb.Business.Services.Interfaces;
-using CmsBlogWeb.Models;
 using CmsBlogWeb.Models.FormModels;
 using CmsBlogWeb.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OrchardCore;
@@ -62,11 +59,10 @@ namespace CmsBlogWeb.Controllers
             var model = await _orchardCoreContentService.GetTypedObject<LoginPageViewModel>(Constants.PageAliases.LoginPage);
             if(model == null)
             {
-                model = new LoginPageViewModel()
-                {
-                    FormModel = new LoginFormModel()
-                };
+                model = new LoginPageViewModel();
             }
+
+            model.FormModel.ReturnUrl = HttpContext.Request.Query["ReturnUrl"].ToString();
             
             return View(model);
         }
@@ -104,6 +100,11 @@ namespace CmsBlogWeb.Controllers
             {
                 ModelState.AddModelError("Email", "Something wrong happened. Please try again later.");
                 return View(loginViewModel);
+            }
+
+            if (!string.IsNullOrEmpty(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl);
             }
 
             var userCasted = user as OrchardCore.Users.Models.User;

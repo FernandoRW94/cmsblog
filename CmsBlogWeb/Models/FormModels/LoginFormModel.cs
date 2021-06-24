@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace CmsBlogWeb.Models.FormModels
 {
@@ -13,5 +14,8 @@ namespace CmsBlogWeb.Models.FormModels
         public string Password { get; set; }
 
         public bool RememberMe { get; set; }
+
+        [HiddenInput]
+        public string ReturnUrl { get; set; }
     }
 }

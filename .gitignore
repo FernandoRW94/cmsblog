@@ -1,1 +1,6 @@
 .vs/
+CmsBlogWeb/obj/
+OrchardCoreCodeDriven/obj/OrchardCoreCodeDriven.csproj.nuget.dgspec.json
+OrchardCoreCodeDriven/obj/
+CmsBlogWeb/bin/
+OrchardCoreCodeDriven/bin/
