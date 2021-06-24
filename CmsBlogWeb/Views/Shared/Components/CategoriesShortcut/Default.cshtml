@@ -1,0 +1,10 @@
+﻿@model CategoriesShortcutViewModel
+
+<div class="nav-scroller py-1 mb-2">
+    <nav class="nav d-flex justify-content-between">
+        @foreach (var item in Model.MenuItemsListPart.MenuItems)
+        {
+            <a class="p-2 link-secondary" href="/?category=@item.LinkMenuItemPart.Url">@item.LinkMenuItemPart.Name</a>
+        }
+    </nav>
+</div>
