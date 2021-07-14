@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace CmsBlogWeb.Controllers
 {
-    [Authorize]
     [AutoValidateAntiforgeryToken]
     public class StoryController : Controller
     {
@@ -32,23 +31,53 @@ namespace CmsBlogWeb.Controllers
             _signInManager = signInManager;
         }
 
+        [HttpGet("/story/{id}")]
+        public async Task<IActionResult> Index(int id)
+        {
+            return View();
+        }
+
+        [Authorize]
         [HttpGet("/new-story")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> NewStory()
         {
             var model = new NewStoryPageViewModel();
 
             return View(model);
         }
 
+        [Authorize]
         [HttpPost("/new-story")]
-        public async Task<IActionResult> Index(StoryFormModel model)
+        public async Task<IActionResult> NewStory(StoryFormModel model)
         {
             if(!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("NewStory");
         }
+
+        [Authorize]
+        [HttpGet("/edit-story/{id}")]
+        public async Task<IActionResult> EditStory(string id)
+        {
+            var model = new NewStoryPageViewModel();
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost("/edit-story/{id}")]
+        public async Task<IActionResult> EditStory(StoryFormModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("EditStory");
+        }
+
     }
 }

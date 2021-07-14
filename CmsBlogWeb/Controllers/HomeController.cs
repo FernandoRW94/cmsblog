@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OrchardCore;
 using OrchardCore.Users;
-using OrchardCore.Users.Services;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CmsBlogWeb.Controllers
@@ -18,18 +19,20 @@ namespace CmsBlogWeb.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IOrchardCoreUserService _orchardCoreUserService;
         private readonly IOrchardCoreContentService _orchardCoreContentService;
-
+        private readonly IOrchardHelper _orchardHelper;
         private readonly SignInManager<IUser> _signInManager;
 
         public HomeController(
             ILogger<HomeController> logger,
             IOrchardCoreUserService orchardCoreUserService,
-            IOrchardCoreContentService orchardCoreContentHelperService,
+            IOrchardCoreContentService orchardCoreContentService,
+            IOrchardHelper orchardHelper,
             SignInManager<IUser> signInManager)
         {
             _logger = logger;
             _orchardCoreUserService = orchardCoreUserService;
-            _orchardCoreContentService = orchardCoreContentHelperService;
+            _orchardCoreContentService = orchardCoreContentService;
+            _orchardHelper = orchardHelper;
             _signInManager = signInManager;
         }
 
@@ -37,6 +40,18 @@ namespace CmsBlogWeb.Controllers
         public async Task<IActionResult> Index()
         {
             var model = await _orchardCoreContentService.GetTypedObject<HomePageViewModel>(Constants.PageAliases.HomePage);
+
+            model.Latest6Stories = (await _orchardHelper.ContentQueryAsync("Latest6Posts")).ToList();
+
+            var top6StoriesParams = new Dictionary<string, object>();
+            top6StoriesParams.Add("skip", 0);
+            top6StoriesParams.Add("take", 6);
+
+            var top6Stories = await _orchardHelper.QueryResultsAsync("AllPosts", top6StoriesParams); //.ContentQueryResultsAsync
+            model.Latest6Stories = top6Stories.Items.Select(x => x as OrchardCore.ContentManagement.ContentItem).ToList();
+
+            var popularPosts = await _orchardHelper.QueryResultsAsync("PopularPosts", top6StoriesParams);
+            model.Top6Stories = popularPosts.Items.Select(x => x as OrchardCore.ContentManagement.ContentItem).ToList();
 
             return View(model);
         }

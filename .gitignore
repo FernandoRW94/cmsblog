@@ -4,3 +4,7 @@ OrchardCoreCodeDriven/obj/OrchardCoreCodeDriven.csproj.nuget.dgspec.json
 OrchardCoreCodeDriven/obj/
 CmsBlogWeb/bin/
 OrchardCoreCodeDriven/bin/
+CmsBlogWeb/App_Data/Sites/Default/Lucene/
+CmsBlogWeb/App_Data/Sites/Default/Media/oneDoesNotSimply.png
+CmsBlogWeb/App_Data/Sites/Default/Media/
+CmsBlogWeb/wwwroot/is-cache/

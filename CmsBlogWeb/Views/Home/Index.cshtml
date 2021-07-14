@@ -17,29 +17,38 @@
 </div>
 
 <div class="container px-4 pb-5" id="custom-cards">
-    <h2 class="pb-2 border-bottom">Popular posts</h2>
+    <h2 class="pb-2 border-bottom">Popular Stories</h2>
 
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
-        <div class="col">
-            <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg" style="background-image: url('https://getbootstrap.com/docs/5.0/examples/features/unsplash-photo-1.jpg');">
-                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                    <h2 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Short title, long jacket</h2>
-                    <ul class="d-flex list-unstyled mt-auto">
-                        <li class="me-auto">
-                            <img src="https://github.com/twbs.png" alt="Bootstrap" width="32" height="32" class="rounded-circle border border-white">
-                        </li>
-                        <li class="d-flex align-items-center me-3">
-                            <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"></use></svg>
-                            <small>Earth</small>
-                        </li>
-                        <li class="d-flex align-items-center">
-                            <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
-                            <small>3d</small>
-                        </li>
-                    </ul>
-                </div>
+        @foreach (var story in Model.Top6Stories)
+        {
+            var daysAgo = DateTime.UtcNow - story.CreatedUtc.Value;
+            var postImage = story.Content.BlogPost.StoryMainImage?.Paths?.Count > 0 ? $"media/{story.Content.BlogPost.StoryMainImage.Paths[0]}" : "https://getbootstrap.com/docs/5.0/examples/features/unsplash-photo-1.jpg";
+
+            <div class="col">
+                <a asp-action="Index" asp-controller="Story" asp-route-id="@story.Id" style="text-decoration: none;">
+                    <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg"
+                         style="background-image: url('@(postImage)');">
+                        <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                            <h2 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">@story.Content.BlogPost.PostTitle.Text</h2>
+                            <ul class="d-flex list-unstyled mt-auto">
+                                <li class="me-auto">
+                                    <img src="https://github.com/twbs.png" alt="Bootstrap" width="32" height="32" class="rounded-circle border border-white">
+                                </li>
+                                <li class="d-flex align-items-center me-3">
+                                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"></use></svg>
+                                    <small>@(story.Content.BlogPost.Place?.Text??"Earth")</small>
+                                </li>
+                                <li class="d-flex align-items-center" title="@(story.CreatedUtc.Value.ToString("dd/MM/yyyy HH:mm"))">
+                                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
+                                    <small>@(daysAgo.TotalDays > 30 ? story.CreatedUtc.Value.ToString("dd/MM/yyyy") : $"{(int)daysAgo.TotalDays}d")</small>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
             </div>
-        </div>
+        }
 
         <div class="col">
             <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg" style="background-image: url('https://getbootstrap.com/docs/5.0/examples/features/unsplash-photo-2.jpg');">
@@ -77,27 +86,6 @@
                         <li class="d-flex align-items-center">
                             <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
                             <small>5d</small>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg" style="background-image: url('https://getbootstrap.com/docs/5.0/examples/features/unsplash-photo-1.jpg');">
-                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
-                    <h2 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Short title, long jacket</h2>
-                    <ul class="d-flex list-unstyled mt-auto">
-                        <li class="me-auto">
-                            <img src="https://github.com/twbs.png" alt="Bootstrap" width="32" height="32" class="rounded-circle border border-white">
-                        </li>
-                        <li class="d-flex align-items-center me-3">
-                            <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"></use></svg>
-                            <small>Earth</small>
-                        </li>
-                        <li class="d-flex align-items-center">
-                            <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
-                            <small>3d</small>
                         </li>
                     </ul>
                 </div>
@@ -150,24 +138,29 @@
     <div class="row g-5">
         <div class="col-md-8">
             <div class="container px-4 py-5" id="hanging-icons">
-                <h2 class="pb-2 border-bottom">Hanging icons</h2>
+                <h2 class="pb-2 border-bottom">Latest Stories</h2>
                 <div class="row g-4 py-5 row-cols-1">
-                    <div class="col d-flex align-items-start">
-                        <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
-                            <svg class="bi" width="1em" height="1em">
-                                <use xlink:href="#toggles2">
+                    @foreach (var story in Model.Latest6Stories)
+                    {
+                        var daysAgo = DateTime.UtcNow - story.CreatedUtc.Value;
+                        var postImage = story.Content.BlogPost.StoryMainImage?.Paths?.Count > 0 ? $"media/{story.Content.BlogPost.StoryMainImage.Paths[0]}" : "https://getbootstrap.com/docs/5.0/examples/features/unsplash-photo-1.jpg";
 
-                                </use>
-                            </svg>
+                        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                            <div class="col p-4 d-flex flex-column position-static">
+                                <h3 class="mb-0">@story.Content.BlogPost.PostTitle.Text</h3>
+                                <div class="mb-1 text-muted d-flex align-items-center" title="@(story.CreatedUtc.Value.ToString("dd/MM/yyyy HH:mm"))">
+                                    <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
+                                    <small>@(daysAgo.TotalDays > 7 ? story.CreatedUtc.Value.ToString("dd/MM/yyyy") : $"{(int)daysAgo.TotalDays}d")</small>
+                                </div>
+                                <p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional content.</p>
+                                <a href="/story/@story.Id" class="stretched-link btn btn-primary">Continue reading</a>
+                            </div>
+                            <div class="col-auto d-none d-lg-block">
+                                <img src="@postImage" alt="@story.Content.BlogPost.PostTitle.Text" class="bd-placeholder-img" width="200" height="250">
+                            </div>
                         </div>
-                        <div>
-                            <h2>Featured title</h2>
-                            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                            <a href="#" class="btn btn-primary">
-                                Primary button
-                            </a>
-                        </div>
-                    </div>
+                    }
+
 
                     <div class="col d-flex align-items-start">
                         <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
