@@ -26,7 +26,7 @@
             var postImage = story.Content.BlogPost.StoryMainImage?.Paths?.Count > 0 ? $"media/{story.Content.BlogPost.StoryMainImage.Paths[0]}" : "https://getbootstrap.com/docs/5.0/examples/features/unsplash-photo-1.jpg";
 
             <div class="col">
-                <a asp-action="Index" asp-controller="Story" asp-route-id="@story.Id" style="text-decoration: none;">
+                <a asp-action="Index" asp-controller="Story" asp-route-id="@story.ContentItemId" style="text-decoration: none;">
                     <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg"
                          style="background-image: url('@(postImage)');">
                         <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
@@ -153,7 +153,7 @@
                                     <small>@(daysAgo.TotalDays > 7 ? story.CreatedUtc.Value.ToString("dd/MM/yyyy") : $"{(int)daysAgo.TotalDays}d")</small>
                                 </div>
                                 <p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional content.</p>
-                                <a href="/story/@story.Id" class="stretched-link btn btn-primary">Continue reading</a>
+                                <a href="/story/@story.ContentItemId" class="stretched-link btn btn-primary">Continue reading</a>
                             </div>
                             <div class="col-auto d-none d-lg-block">
                                 <img src="@postImage" alt="@story.Content.BlogPost.PostTitle.Text" class="bd-placeholder-img" width="200" height="250">

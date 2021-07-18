@@ -28,6 +28,7 @@
         {
             public const string Header = "Header";
             public const string BlogPost = "BlogPost";
+            public const string Categories = "Categories";
         }
 
         public static class UserRoles

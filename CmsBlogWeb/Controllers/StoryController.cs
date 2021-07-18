@@ -5,8 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OrchardCore;
 using OrchardCore.Users;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using YesSql.Services;
 
 namespace CmsBlogWeb.Controllers
 {
@@ -14,27 +18,41 @@ namespace CmsBlogWeb.Controllers
     public class StoryController : Controller
     {
         private readonly ILogger<StoryController> _logger;
-        private readonly IOrchardCoreUserService _orchardCoreUserService;
-        private readonly IOrchardCoreContentService _orchardCoreContentService;
-
+        private readonly IOrchardHelper _orchardHelper;
         private readonly SignInManager<IUser> _signInManager;
 
         public StoryController(
             ILogger<StoryController> logger,
-            IOrchardCoreUserService orchardCoreUserService,
-            IOrchardCoreContentService orchardCoreContentHelperService,
+            IOrchardHelper orchardHelper,
             SignInManager<IUser> signInManager)
         {
             _logger = logger;
-            _orchardCoreUserService = orchardCoreUserService;
-            _orchardCoreContentService = orchardCoreContentHelperService;
+            _orchardHelper = orchardHelper;
             _signInManager = signInManager;
         }
 
         [HttpGet("/story/{id}")]
-        public async Task<IActionResult> Index(int id)
+        public async Task<IActionResult> Index(string id)
         {
-            return View();
+            var story = await _orchardHelper.GetContentItemByIdAsync(id);
+
+            if(story == null)
+            {
+                return Redirect("/404");
+            }
+
+            var model = new StoryPageViewModel
+            {
+                Content = story
+            };
+
+            var categoriesIds = ((IEnumerable<dynamic>)story.Content.BlogPost.TagsTaxonomy.TermContentItemIds).Select(x => x.ToString());
+            var relatedStories = await _orchardHelper.QueryCategorizedContentItemsAsync(
+                query => query.Where(
+                    index => index.TermContentItemId.IsIn(categoriesIds) && index.ContentItemId != id));
+            model.RelatedStories = relatedStories.OrderByDescending(x => x.CreatedUtc).Take(3).ToList();
+
+            return View(model);
         }
 
         [Authorize]

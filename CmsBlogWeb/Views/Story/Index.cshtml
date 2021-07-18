@@ -1,21 +1,61 @@
-﻿@{
-    ViewData["Title"] = "Story title";
+﻿@model StoryPageViewModel
+
+@{
+    ViewData["Title"] = Model.Content.Content.BlogPost.PostTitle.Text;
+    var postImage = Model.Content.Content.BlogPost.StoryMainImage?.Paths?.Count > 0 ?
+        $"/media/{Model.Content.Content.BlogPost.StoryMainImage.Paths[0]}" : "https://images.unsplash.com/photo-1551029506-0807df4e2031?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2091&q=80";
 }
 
-<h1>Story title</h1>
+<div class="container col-8 px-4 pt-5 pb-5">
+    <div class="text-center">
+        <h1>@Model.Content.Content.BlogPost.PostTitle.Text</h1>
 
-<p class="blog-post-meta">
-    January 1, 2021 by <a href="#">Mark</a>
-</p>
+        <div>
+            <p class="blog-post-meta">
+                @Model.Content.CreatedUtc.Value.ToString("MMMM dd, yyyy") by <a href="#">@Model.Content.Author</a>
+            </p>
+        </div>
 
-<p>
-    This blog post shows a few different types of content that’s supported and styled with Bootstrap. Basic typography, lists, tables, images, code, and more are all supported as expected.
-</p>
+        <div class="w-100">
+            <img src="@postImage" />
+        </div>
+    </div>
 
-<p>
-    Bootstrap’s form controls expand on our Rebooted form styles with classes. Use these classes to opt into their customized displays for a more consistent rendering across browsers and devices.
-    <br />
-    Be sure to use an appropriate type attribute on all inputs (e.g., email for email address or number for numerical information) to take advantage of newer input controls like email verification, number selection, and more.
-    <br />
-    Here’s a quick example to demonstrate Bootstrap’s form styles. Keep reading for documentation on required classes, form layout, and more.
-</p>
+    <div class="pt-5">
+        @Html.Raw(Model.Content.Content.BlogPost.Content.Html)
+    </div>
+
+    @if (Model.RelatedStories != null && Model.RelatedStories.Any())
+    {
+        <div class="pt-5 text-center align-items-center">
+            <h4>You might also like</h4>
+
+            <div class="w-100">
+                <div class="row row-cols-1 row-cols-lg-3 align-items-stretch justify-content-center g-4 py-5">
+                    @foreach (var story in Model.RelatedStories)
+                    {
+                        var daysAgo = DateTime.UtcNow - story.CreatedUtc.Value;
+                        var relatedPostImage = story.Content.BlogPost.StoryMainImage?.Paths?.Count > 0 ? $"/media/{story.Content.BlogPost.StoryMainImage.Paths[0]}" : "https://getbootstrap.com/docs/5.0/examples/features/unsplash-photo-1.jpg";
+
+                        <div class="col">
+                            <a asp-action="Index" asp-controller="Story" asp-route-id="@story.ContentItemId" style="text-decoration: none;">
+                                <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg"
+                                     style="background-image: url('@(relatedPostImage)');">
+                                    <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                                        <h2 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">@story.Content.BlogPost.PostTitle.Text</h2>
+                                        <ul class="d-flex list-unstyled mt-auto">
+                                            <li class="d-flex align-items-center" title="@(story.CreatedUtc.Value.ToString("dd/MM/yyyy HH:mm"))">
+                                                <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"></use></svg>
+                                                <small>@(daysAgo.TotalDays > 30 ? story.CreatedUtc.Value.ToString("dd/MM/yyyy") : $"{(int)daysAgo.TotalDays}d")</small>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

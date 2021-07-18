@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using YesSql.Services;
 
 namespace CmsBlogWeb.Controllers
 {
@@ -47,11 +48,16 @@ namespace CmsBlogWeb.Controllers
             top6StoriesParams.Add("skip", 0);
             top6StoriesParams.Add("take", 6);
 
-            var top6Stories = await _orchardHelper.QueryResultsAsync("AllPosts", top6StoriesParams); //.ContentQueryResultsAsync
+            var top6Stories = await _orchardHelper.QueryResultsAsync("AllPosts", top6StoriesParams);
             model.Latest6Stories = top6Stories.Items.Select(x => x as OrchardCore.ContentManagement.ContentItem).ToList();
 
             var popularPosts = await _orchardHelper.QueryResultsAsync("PopularPosts", top6StoriesParams);
             model.Top6Stories = popularPosts.Items.Select(x => x as OrchardCore.ContentManagement.ContentItem).ToList();
+
+            //var tags = new List<string> { "Action", "Horror" };
+            //var categoriesContentItem = await _orchardHelper.GetContentItemByAliasAsync(Constants.ContentTypes.Categories);
+            //var categoriesIds = ((IEnumerable<dynamic>)categoriesContentItem.Content.TaxonomyPart.Terms).Where(x => tags.Contains(x.DisplayText.Value)).Select(y => y.ContentItemId.Value);
+            //var postsWithCategories = await _orchardHelper.QueryCategorizedContentItemsAsync(query => query.Where(index => index.TermContentItemId.IsIn(categoriesIds)));
 
             return View(model);
         }
@@ -80,3 +86,4 @@ namespace CmsBlogWeb.Controllers
         }
     }
 }
+
